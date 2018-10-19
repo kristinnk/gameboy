@@ -3,7 +3,7 @@ const config = {
     width: 160,
     height: 144,
     parent: "game-container",
-    pixelArt: true,
+    pixelArt: false,
     backgroundColor: 'rgb(77,83,60)',
     physics: {
         default: "arcade",
@@ -25,7 +25,7 @@ let cursors;
 
 function preload() {
     this.load.sprite
-    this.load.image("mainTiles", "assets/tilesets/tiles.png");
+    this.load.image("mainTiles", "assets/tilesets/tileset_extruded.png");
     this.load.image("brickTiles", "assets/tilesets/brickTiles.png");
     this.load.image("netTiles", "assets/tilesets/net.png");
     this.load.image("palette", "assets/tilesets/GBPalette.gif");
@@ -35,7 +35,7 @@ function preload() {
 
 function create() {
     const map = this.make.tilemap({key: "map"})
-    const tileset = map.addTilesetImage("MapTiles","mainTiles")
+    const tileset = map.addTilesetImage("MapTiles","mainTiles", 16, 16)
     const behindPlayer = map.createStaticLayer("PlayerLayer", tileset, -100, -100)
     const camera = this.cameras.main;
 
@@ -70,12 +70,14 @@ function create() {
       repeat: -1
     });
 
+
     this.anims.create({
       key: 'jump',
-      frames: this.anims.generateFrameNumbers('gameboy', { start: 14, end: 17 }),
+      frames: this.anims.generateFrameNumbers('gameboy', { start: 14, end: 18 }),
       frameRate : 8,
       repeat: -1
     });
+    
 }
 
 function update(time, delta) {
@@ -93,11 +95,11 @@ function update(time, delta) {
       player.anims.play('turn', true);
     }
 
-    /*
+    
     if (!player.body.blocked.down) {
-      player.anims.play('jump', true);
+     // player.anims.play('jump', true);
     }
-    */
+    
 
     if (cursors.up.isDown && player.body.blocked.down)
     {
