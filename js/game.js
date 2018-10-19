@@ -1,13 +1,14 @@
 const config = {
     type: Phaser.AUTO,
     width: 160,
-    height: 140,
+    height: 144,
     parent: "game-container",
     pixelArt: true,
+    backgroundColor: 'rgb(77,83,60)',
     physics: {
         default: "arcade",
         arcade: {
-          gravity: { y: 400 }
+          gravity: { y: 500 }
         }
       },
     scene: {
@@ -35,47 +36,67 @@ function preload() {
 function create() {
     const map = this.make.tilemap({key: "map"})
     const tileset = map.addTilesetImage("MapTiles","mainTiles")
-    const behindPlayer = map.createStaticLayer("PlayerLayer", tileset, -100, 10)
+    const behindPlayer = map.createStaticLayer("PlayerLayer", tileset, -100, -100)
     const camera = this.cameras.main;
 
-    player = this.physics.add.sprite(0, 0, "gameboy");
+    player = this.physics.add.sprite(100, 0, "gameboy");
     player.setBounce(0.1);
-
-    // Set up the arrows to control the camera
+    
     cursors = this.input.keyboard.createCursorKeys();
 
     behindPlayer.setCollisionByProperty({ collides: true });
-    this.physics.add.collider(player, map);
+    this.physics.add.collider(player, behindPlayer);
     camera.startFollow(player);
-/*
-    this.input.keyboard.once("keydown_D", event => {
-        this.physics.world.createDebugGraphic();
-        const graphics = this.add
-          .graphics()
-          .setAlpha(0.75)
-          .setDepth(20);
-          behindPlayer.renderDebug(graphics, {
-          tileColor: null,
-          collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255),
-          faceColor: new Phaser.Display.Color(40, 39, 37, 255)
-        });
-      });*/
+
+    // Animations
+    this.anims.create({
+      key: 'left',
+      frames: this.anims.generateFrameNumbers('gameboy', { start: 28, end: 33 }),
+      frameRate : 8,
+      repeat: -1
+    });
+
+    this.anims.create({
+      key: 'right',
+      frames: this.anims.generateFrameNumbers('gameboy', { start: 0, end: 3 }),
+      frameRate : 8,
+      repeat: -1
+    });
+
+    this.anims.create({
+      key: 'turn',
+      frames: this.anims.generateFrameNumbers('gameboy', { start: 8, end: 10 }),
+      frameRate : 8,
+      repeat: -1
+    });
+
+    this.anims.create({
+      key: 'jump',
+      frames: this.anims.generateFrameNumbers('gameboy', { start: 14, end: 17 }),
+      frameRate : 8,
+      repeat: -1
+    });
 }
 
 function update(time, delta) {
-    var speed = 100;
-    player.body.setVelocity(0);
+    var speed = 160;
+    // player.body.setVelocity(0);
     
     if (cursors.left.isDown) {
-        player.body.setVelocityX(-speed);
-      } else if (cursors.right.isDown) {
-        player.body.setVelocityX(speed);
-      }
+      player.body.setVelocityX(-speed);
+      player.anims.play('left', true);
+    } else if (cursors.right.isDown) {
+      player.body.setVelocityX(speed);
+      player.anims.play('right', true);
+    } else {
+      player.setVelocityX(0)
+      player.anims.play('turn');
+    }
 
-    if (cursors.up.isDown) {
-        player.body.setVelocityY(-speed);
-    } else if (cursors.down.isDown) {
-        player.body.setVelocityY(speed);
+    if (cursors.up.isDown && player.body.blocked.down)
+    {
+        player.setVelocityY(-230);
+        
     }
 
     // player.body.velocity.normalize().scale(100);
