@@ -65,8 +65,8 @@ function create() {
 
     this.anims.create({
       key: 'turn',
-      frames: this.anims.generateFrameNumbers('gameboy', { start: 8, end: 10 }),
-      frameRate : 8,
+      frames: this.anims.generateFrameNumbers('gameboy', { start: 8, end: 9 }),
+      frameRate : 0.5,
       repeat: -1
     });
 
@@ -90,15 +90,17 @@ function update(time, delta) {
       player.anims.play('right', true);
     } else {
       player.setVelocityX(0)
-      player.anims.play('turn');
+      player.anims.play('turn', true);
     }
+
+    /*
+    if (!player.body.blocked.down) {
+      player.anims.play('jump', true);
+    }
+    */
 
     if (cursors.up.isDown && player.body.blocked.down)
     {
         player.setVelocityY(-230);
-        
     }
-
-    // player.body.velocity.normalize().scale(100);
-
 }
